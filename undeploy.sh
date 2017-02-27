@@ -16,10 +16,10 @@ echo '
 
 '
 
-cf delete-service user-service -f
-cf delete-service edge-service -f
-cf delete-service discovery-service -f
-cf delete-service config-service -f
+#cf delete-service user-service -f
+#cf delete-service edge-service -f
+#cf delete-service discovery-service -f
+#cf delete-service config-service -f
 
 
 cf delete account-service -r -f
