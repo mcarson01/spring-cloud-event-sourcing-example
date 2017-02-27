@@ -8,6 +8,7 @@ applications:
   timeout: 180
   env:
     SPRING_PROFILES_ACTIVE: cloud
+    FORCE_HTTPS: false
   services:
    - discovery-service
    - config-service

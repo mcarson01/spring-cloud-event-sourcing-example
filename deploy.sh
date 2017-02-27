@@ -85,7 +85,6 @@ do
 
 
     # Retrieve full url for backing service
-#    host=$(cf curl /v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.host')
     host=$(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.host')
     echo "host: ${host}"
     
@@ -96,12 +95,18 @@ do
 	fi
     
     
-#    domain=$(cf curl $(cf curl /v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.domain_url') | jq -r '.entity.name')
-    domain=$(cf curl $(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.domain_url') | jq -r '.entity.name')
+    
+    appUrl=$(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.domain_url' | sed 's/^\///g')
+	    
+    #$string | sed 's/^\///g'    
+    
+    domain=$(cf curl ${appUrl} | jq -r '.entity.name')
+#    domain=$(cf curl $(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.domain_url') | jq -r '.entity.name')
     echo "domain: ${domain}"
     if [ "$domain" == "null" ]; then
     	echo "trying second element for domain"
-	    domain=$(cf curl $(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[1].entity.domain_url') | jq -r '.entity.name')
+	    appUrl=$(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[1].entity.domain_url' | sed 's/^\///g')
+	    domain=$(cf curl ${appUrl} | jq -r '.entity.name')
 	    echo "domain - 2nd try: ${domain}"
 	fi
 

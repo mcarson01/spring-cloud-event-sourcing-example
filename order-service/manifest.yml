@@ -8,6 +8,7 @@ applications:
   path: target/order-service-0.0.1-SNAPSHOT.jar
   env:
     SPRING_PROFILES_ACTIVE: cloud
+    FORCE_HTTPS: false
   services:
    - discovery-service
    - config-service
