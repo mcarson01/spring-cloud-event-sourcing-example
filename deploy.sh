@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Deploys the online store application to CF
+set -x
 
 echo '
    ____ _                 _   _   _       _   _
@@ -34,6 +35,7 @@ include_arr() {
 # Get manifest files for app deployments and services
 declare -a dirs
 i=1
+
 for d in `find */* -name manifest.yml -type f`
 do
     dirs[i++]=$(echo "${d%/}" | sed -e "s/\/manifest.yml//g")
@@ -53,6 +55,7 @@ echo 'Deploying backing services...\n---'
 
 PROJECT_DIR=$PWD
 
+echo ${service_instances[@]}
 for D in ${service_instances[@]}
 do
     # Find the existing app
@@ -66,15 +69,41 @@ do
     else
         # Be sure to use the already existing route
         echo "Getting existing route for '${D}'..."
-        route=$(cf curl /v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.host')
+        route=$(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.host')
         echo "Found route '${route}'\n"
+	    if [ "$route" == "null" ]; then
+	    	echo "trying second element for route"
+	        route=$(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[1].entity.host')
+		    echo "route - 2nd try: ${route}"
+		fi
+
+
+
         echo "Pushing ${D}..."
         cf push -n $route
     fi
 
+
     # Retrieve full url for backing service
-    host=$(cf curl /v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.host')
-    domain=$(cf curl $(cf curl /v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.domain_url') | jq -r '.entity.name')
+#    host=$(cf curl /v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.host')
+    host=$(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.host')
+    echo "host: ${host}"
+    
+    if [ "$host" == "null" ]; then
+    	echo "trying second element for host"
+	    host=$(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[1].entity.host')
+	    echo "host - 2nd try: ${host}"
+	fi
+    
+    
+#    domain=$(cf curl $(cf curl /v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.domain_url') | jq -r '.entity.name')
+    domain=$(cf curl $(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.domain_url') | jq -r '.entity.name')
+    echo "domain: ${domain}"
+    if [ "$domain" == "null" ]; then
+    	echo "trying second element for domain"
+	    domain=$(cf curl $(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[1].entity.domain_url') | jq -r '.entity.name')
+	    echo "domain - 2nd try: ${domain}"
+	fi
 
     # Check if service instance already exists
     service=$(echo $(cf service ${D}) | grep -v 'FAILED')
@@ -105,8 +134,14 @@ do
     else
         # Be sure to use the already existing route
         echo "Getting existing route for '${D}'..."
-        route=$(cf curl /v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.host')
+        route=$(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[0].entity.host')
         echo "Found route '${route}'\n"
+	    if [ "$route" == "null" ]; then
+	    	echo "trying second element for route"
+	        route=$(cf curl v2/apps/$(cf app ${D} --guid)/routes | jq -r '.resources[1].entity.host')
+		    echo "route - 2nd try: ${route}"
+		fi
+
         echo "Pushing ${D}..."
         cf push -n $route
     fi

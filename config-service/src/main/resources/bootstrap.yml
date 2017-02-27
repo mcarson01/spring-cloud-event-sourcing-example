@@ -7,4 +7,11 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/kbastani/spring-cloud-event-sourcing-cf-config.git
+          uri: https://github.com/mcarson01/spring-cloud-event-sourcing-config.git
+          username: mcarson01
+          password: sloppJum1
+#          uri: https://github.com/mcarson01/spring-cloud-event-sourcing-config/tree/pcf
+#          uri: https://github.com/mcarson01/spring-cloud-event-sourcing-config.git
+logging:
+    level:
+        org.springframework: INFO
