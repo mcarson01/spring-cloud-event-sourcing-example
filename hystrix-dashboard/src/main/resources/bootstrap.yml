@@ -22,7 +22,7 @@ spring:
   cloud:
     config:
 #      uri: ${vcap.services.config-service.credentials.uri:http://localhost:8888}
-      uri: http://config-service.apps.apcf.io
+      uri: https://config-service.apps.apcf.io
 eureka:
   instance:
     prefer-ip-address: true
@@ -31,7 +31,7 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://discovery-service.apps.apcf.io/eureka/
+      defaultZone: https://discovery-service.apps.apcf.io/eureka/
 #      defaultZone: http://localhost:8761/eureka/
     healthcheck:
       enabled: true      
