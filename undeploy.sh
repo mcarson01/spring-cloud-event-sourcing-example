@@ -16,12 +16,6 @@ echo '
 
 '
 
-#cf delete-service user-service -f
-#cf delete-service edge-service -f
-#cf delete-service discovery-service -f
-#cf delete-service config-service -f
-
-
 cf delete account-service -r -f
 cf delete catalog-service -r -f
 cf delete config-service -r -f
@@ -34,3 +28,9 @@ cf delete order-service -r -f
 cf delete user-service -r -f
 cf delete shopping-cart-service -r -f
 cf delete zipkin-tracing -r -f
+
+cf delete-service user-service -f
+cf delete-service edge-service -f
+cf delete-service discovery-service -f
+cf delete-service config-service -f
+
